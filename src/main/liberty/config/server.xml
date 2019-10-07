@@ -1,0 +1,70 @@
+<server>
+    <featureManager>
+        <feature>webProfile-6.0</feature>
+        <feature>jndi-1.0</feature>
+        <feature>jaxrs-1.1</feature>
+        <feature>wasJmsServer-1.0</feature>
+        <feature>wasJmsClient-1.1</feature>
+        <feature>wmqJmsClient-1.1</feature>
+        <feature>jmsMdb-3.1</feature>
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="${httpPort}" httpsPort="${httpsPort}" />
+
+    <keyStore id="defaultKeyStore" password="passwordlol" />
+    <quickStartSecurity userName="admin" userPassword="admin" />
+
+    <messagingEngine id="defaultME">
+        <queue id="Queue1" />
+        <queue id="Queue2" />
+        <queue id="MessageQueue1" />
+    </messagingEngine>
+
+    <wasJmsEndpoint id="InboundJmsCommsEndpoint" host="localhost" wasJmsPort="${jmsPort}" wasJmsSSLPort="${jmsSslPort}" />
+
+    <variable name="jms.port" value="${jmsPort}" />
+    <variable name="jms.ssl.port" value="${jmsSslPort}" />
+
+    <jmsConnectionFactory jndiName="jms/localCF">
+        <properties.wasJms />
+    </jmsConnectionFactory>
+
+    <jmsConnectionFactory jndiName="jms/remoteCF">
+        <properties.wasJms remoteServerAddress="localhost:${jms.port}:BootstrapBasicMessaging" />
+    </jmsConnectionFactory>
+
+    <jmsConnectionFactory jndiName="jms/localMessageCF">
+        <properties.wasJms />
+    </jmsConnectionFactory>
+
+    <jmsQueueConnectionFactory id="MQTestQCF" jndiName="jms/mqRemoteQCF">
+        <properties.wmqJms channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest"/>
+    </jmsQueueConnectionFactory>
+
+    <jmsQueue jndiName="jms/jmsQueue1">
+        <properties.wasJms queueName="Queue1" />
+    </jmsQueue>
+
+    <jmsQueue jndiName="jms/jmsRemoteQueue">
+        <properties.wasJms queueName="Queue2" />
+    </jmsQueue>
+
+    <!-- NOTE: id must match name of ear/name of war/name of bean -->
+    <jmsActivationSpec id="jms/LocalMessageConsumer">
+        <properties.wasJms destination="jms/jmsLocalMessageQueue" />
+    </jmsActivationSpec>
+
+    <jmsQueue jndiName="jms/jmsLocalMessageQueue">
+        <properties.wasJms queueName="MessageQueue1" />
+    </jmsQueue>
+
+    <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">
+        <properties.wmqJms baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.1"/>
+    </jmsQueue>
+
+    <variable name="wmqJmsClient.rar.location" value="/Users/liam/Desktop/wmq.jmsra.rar" />
+
+    <logging traceSpecification="com.ibm.ws.messaging.*=all" traceFileName="trace.log" traceFormat="BASIC" />
+
+    <!--    <connectionManager id="localConnMgr" maxPoolSize="2" />-->
+</server>
