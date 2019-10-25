@@ -4,10 +4,7 @@ import jms.app.beans.RemoteQueueBean
 import javax.ejb.EJB
 import javax.ejb.Stateless
 import javax.jms.Message
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.PathParam
-import javax.ws.rs.Produces
+import javax.ws.rs.*
 
 @Path("/remote")
 @Stateless
@@ -16,7 +13,7 @@ open class RemoteJmsApi {
     open lateinit var remoteBean: RemoteQueueBean
     
     @GET
-    @Path("receive")
+    @Path("/receive")
     @Produces("application/json")
     open fun receiveMessage(): List<String> {
         return try {
@@ -26,10 +23,10 @@ open class RemoteJmsApi {
         }
     }
     
-    @GET
-    @Path("send/{message}")
+    @POST
+    @Path("/send")
     @Produces("application/json")
-    open fun sendMessage(@PathParam("message") message: String): List<String> {
+    open fun sendMessage(message: String): List<String> {
         val m = remoteBean.session.createMessage()
         m.setObjectProperty("testKey", message)
         remoteBean.send(m, remoteBean.queue)

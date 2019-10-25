@@ -23,7 +23,7 @@ const props = {
   },
 };
 
-const LandingPage = () => {
+const MqPage = () => {
   const [testMessage, setTestMessage] = useState('');
   const [toastProps, setToastProps] = useState([]);
 
@@ -67,21 +67,8 @@ const LandingPage = () => {
     setToastProps(currentProps => currentProps.filter(prop => !arePropsEqual(prop, props)));
   };
 
-  const sendLocalMessage = async (message) => {
-    const response = await axios.post(`${window.location.origin}/jms/rest/local/echo`, message);
-    const result = response.data;
-    const responseProps = {
-      title: 'Response',
-      subtitle: 'Local queue',
-      caption: result[0],
-      kind: 'success'
-    };
-
-    await showAndHideToast(responseProps);
-  };
-
-  const sendRemoteMessage = async (message) => {
-    const response = await axios.post(`${window.location.origin}/jms/rest/remote/send`, message);
+  const sendMQMessage = async (message) => {
+    const response = await axios.post(`${window.location.origin}/jms/rest/mq/send`, message);
     const result = response.data;
     const responseProps = {
       title: 'Status',
@@ -93,8 +80,8 @@ const LandingPage = () => {
     await showAndHideToast(responseProps);
   };
 
-  const receiveMessage = async () => {
-    const response = await axios.get(`${window.location.origin}/jms/rest/remote/receive`);
+  const receiveMQMessage = async () => {
+    const response = await axios.get(`${window.location.origin}/jms/rest/mq/receive`);
     let props = {};
     if (response.data.toString().indexOf('error') !== -1) {
       props = {
@@ -115,12 +102,47 @@ const LandingPage = () => {
     await showAndHideToast(props);
   };
 
-  const produceMessageForBean = async (message) => {
-    const response = await axios.post(`${window.location.origin}/jms/rest/mdb/local/do_message`, message);
+  const sendMQTopicMessage = async (message) => {
+    const response = await axios.post(`${window.location.origin}/jms/rest/mq/topic/send`, message);
     const result = response.data;
     const responseProps = {
       title: 'Status',
-      subtitle: 'Local message producer',
+      subtitle: 'Remote topic',
+      caption: result[0],
+      kind: 'success'
+    };
+
+    await showAndHideToast(responseProps);
+  };
+
+  const receiveMQTopicMessage = async () => {
+    const response = await axios.get(`${window.location.origin}/jms/rest/mq/topic/receive`);
+    let props = {};
+    if (response.data.toString().indexOf('error') !== -1) {
+      props = {
+        title: 'Receive Failed',
+        subtitle: 'Remote topic',
+        caption: response.data,
+        kind: 'error'
+      }
+    } else {
+      props = {
+        title: 'Response',
+        subtitle: 'Remote topic',
+        caption: response.data[0],
+        kind: 'success'
+      }
+    }
+
+    await showAndHideToast(props);
+  };
+
+  const produceMQMessageForBean = async (message) => {
+    const response = await axios.post(`${window.location.origin}/jms/rest/mq/mdb/do_message/`, message);
+    const result = response.data;
+    const responseProps = {
+      title: 'Status',
+      subtitle: 'MQ message producer',
       caption: result[0],
       kind: 'success'
     };
@@ -129,81 +151,55 @@ const LandingPage = () => {
   };
 
   const renderToast = () => {
-      return (
-        <div>
-          {toastProps.map((prop) => (
-            <ToastNotification {...prop} />
-          ))}
-        </div>
-      )
+    return (
+      <div>
+        {toastProps.map((prop) => (
+          <ToastNotification {...prop} />
+        ))}
+      </div>
+    )
   };
 
   return (
-    <div className="bx--grid bx--grid--full-width landing-page">
-      <div className="bx--row landing-page__banner">
+    <div className="bx--grid bx--grid--full-width mq-page">
+      <div className="bx--row mq-page__banner">
         <div className="bx--col-lg-16">
           <Breadcrumb noTrailingSlash aria-label="Page navigation">
             <BreadcrumbItem>
-              <a href="/">JMS Workbench</a>
+              <a href="/">MQ Funhouse</a>
             </BreadcrumbItem>
           </Breadcrumb>
-          <h1 className="landing-page__heading">
-            Test JMS Resources
+          <h1 className="mq-page__heading">
+            Test MQ Resources
           </h1>
         </div>
       </div>
-      <div className="bx--row landing-page__r2">
+      <div className="bx--row mq-page__r2">
         <div className="bx--col bx--no-gutter">
           <Tabs {...props.tabs} aria-label="Tab navigation">
-            <Tab {...props.tab} label="Local Queue">
+            <Tab {...props.tab} label="IBM MQ Queue">
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
-                <div className="bx--row landing-page__tab-content">
+                <div className="bx--row mq-page__tab-content">
                   <div className="bx--col-md-4 bx--col-lg-7">
-                    <h2 className="landing-page__subheading">
-                      Local Queue Test
-                    </h2>
-                    <p className="landing-page__p">
-                      This will send a message and return what was received.
-                    </p>
-                    <div className="landing-page__form">
-                      <TextInput labelText={'Message to send'} id={'localTestText'} value={testMessage}
-                                 onChange={(e) => setTestMessage(e.target.value)}/>
-                      <Button onClick={() => sendLocalMessage(testMessage)} disabled={testMessage.length === 0}>Test local queue</Button>
-                    </div>
-                  </div>
-                  <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
-                    <img
-                      className="landing-page__illo"
-                      src={`${process.env.PUBLIC_URL}/tab-illo.png`}
-                      alt="Carbon illustration"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Tab>
-            <Tab {...props.tab} label="Remote Queue">
-              <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
-                <div className="bx--row landing-page__tab-content">
-                  <div className="bx--col-md-4 bx--col-lg-7">
-                    <h2 className="landing-page__subheading">
+                    <h2 className="mq-page__subheading">
                       Remote Queue Test
                     </h2>
-                    <p className="landing-page__p">
-                      Send messages to the queue, then retrieve them. The queue is accessed remotely over the JMS endpoint.
+                    <p className="mq-page__p">
+                      Send messages to MQ, then retrieve them. The queue is accessed remotely over the MQ endpoint.
                     </p>
-                    <div className="landing-page__form">
-                      <TextInput labelText={'Message to send'} id={'remoteTestText'} value={testMessage}
+                    <div className="mq-page__form">
+                      <TextInput labelText={'Message to send'} id={'mqTestText'} value={testMessage}
                                  onChange={(e) => setTestMessage(e.target.value)} />
-                      <div className="landing-page__button-array">
-                        <Button onClick={() => sendRemoteMessage(testMessage)} disabled={testMessage.length === 0}>Send message to remote queue</Button>
-                        <Button onClick={() => receiveMessage()} >Attempt to receive message from remote queue</Button>
+                      <div className="mq-page__button-array">
+                        <Button onClick={() => sendMQMessage(testMessage)} disabled={testMessage.length === 0}>Send message to remote queue</Button>
+                        <Button onClick={() => receiveMQMessage()} >Attempt to receive message from remote queue</Button>
                       </div>
 
                     </div>
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
                     <img
-                      className="landing-page__illo"
+                      className="mq-page__illo"
                       src={`${process.env.PUBLIC_URL}/tab-illo.png`}
                       alt="Carbon illustration"
                     />
@@ -211,25 +207,55 @@ const LandingPage = () => {
                 </div>
               </div>
             </Tab>
-            <Tab {...props.tab} label="MDBs">
+            <Tab {...props.tab} label="IBM MQ Topic">
               <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
-                <div className="bx--row landing-page__tab-content">
+                <div className="bx--row mq-page__tab-content">
                   <div className="bx--col-md-4 bx--col-lg-7">
-                    <h2 className="landing-page__subheading">
-                      Message-driven bean test
+                    <h2 className="mq-page__subheading">
+                      Remote Topic Test
                     </h2>
-                    <p className="landing-page__p">
-                      This will send a message; an MDB should be activated and print a message to the server logs.
+                    <p className="mq-page__p">
+                      Publish messages to MQ, then subscribe to them. The topic is accessed remotely over the MQ endpoint.
                     </p>
-                    <div className="landing-page__form">
-                      <TextInput labelText={'Message to send'} id={'mdbTestText'} value={testMessage}
-                                 onChange={(e) => setTestMessage(e.target.value)}/>
-                      <Button onClick={() => produceMessageForBean(testMessage)} disabled={testMessage.length === 0}>Create message for bean</Button>
+                    <div className="mq-page__form">
+                      <TextInput labelText={'Message to send'} id={'mqTestText'} value={testMessage}
+                                 onChange={(e) => setTestMessage(e.target.value)} />
+                      <div className="mq-page__button-array">
+                        <Button onClick={() => sendMQTopicMessage(testMessage)} disabled={testMessage.length === 0}>Publish message to remote topic</Button>
+                        <Button onClick={() => receiveMQTopicMessage()} >Attempt to subscribe to message from remote topic</Button>
+                      </div>
+
                     </div>
                   </div>
                   <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
                     <img
-                      className="landing-page__illo"
+                      className="mq-page__illo"
+                      src={`${process.env.PUBLIC_URL}/tab-illo.png`}
+                      alt="Carbon illustration"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Tab>
+            <Tab {...props.tab} label="MQ MDB">
+              <div className="bx--grid bx--grid--no-gutter bx--grid--full-width">
+                <div className="bx--row mq-page__tab-content">
+                  <div className="bx--col-md-4 bx--col-lg-7">
+                    <h2 className="mq-page__subheading">
+                      MQ Message-driven bean test
+                    </h2>
+                    <p className="mq-page__p">
+                      This will send a message to MQ; an MDB should be activated and print a message to the server logs.
+                    </p>
+                    <div className="mq-page__form">
+                      <TextInput labelText={'Message to send'} id={'mqMdbTestText'} value={testMessage}
+                                 onChange={(e) => setTestMessage(e.target.value)}/>
+                      <Button onClick={() => produceMQMessageForBean(testMessage)} disabled={testMessage.length === 0}>Create MQ message for bean</Button>
+                    </div>
+                  </div>
+                  <div className="bx--col-md-4 bx--offset-lg-1 bx--col-lg-8">
+                    <img
+                      className="mq-page__illo"
                       src={`${process.env.PUBLIC_URL}/tab-illo.png`}
                       alt="Carbon illustration"
                     />
@@ -240,7 +266,7 @@ const LandingPage = () => {
           </Tabs>
         </div>
       </div>
-      <div className="landing-page__toast">
+      <div className="mq-page__toast">
         { renderToast() }
       </div>
     </div>
@@ -248,4 +274,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default MqPage;

@@ -1,16 +1,16 @@
 package jms.app
 
-import jms.app.beans.LocalMessageProducer
+import jms.app.beans.MqMessageProducer
 import javax.ejb.*
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 
-@Path("/mdb/local")
+@Path("/mq/mdb")
 @Stateless
-open class LocalMdbApi {
+open class MqMdbApi {
 
     @EJB
-    open lateinit var producer: LocalMessageProducer
+    open lateinit var producer: MqMessageProducer
 
     @POST
     @Path("/do_message")
