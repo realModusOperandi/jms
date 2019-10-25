@@ -28,6 +28,16 @@ open class MqTopicBean {
     open fun initBean() {
         // Topics only keep messages for as long as it takes to send to all existing subscribers
         // (ignoring durable subscriptions) so the listener has to be set up immediately
+
+    }
+
+    @PreDestroy
+    open fun tearDownBean() {
+        println("Tearing down MQ topic bean")
+
+    }
+
+    open fun send(message: String) {
         conn = cf.createTopicConnection()
         conn!!.start()
 
@@ -35,17 +45,6 @@ open class MqTopicBean {
         val destination = session!!.createTopic("topic://dev1/")
 
         subscriber = session!!.createDurableSubscriber(destination, "mqtest")
-    }
-
-    @PreDestroy
-    open fun tearDownBean() {
-        println("Tearing down MQ topic bean")
-        subscriber!!.close()
-        session!!.close()
-        conn!!.close()
-    }
-
-    open fun send(message: String) {
         val m = session!!.createMessage()
         m.setObjectProperty("testKey", message)
 
@@ -53,11 +52,25 @@ open class MqTopicBean {
         publisher.send(m)
 
         publisher.close()
+        subscriber!!.close()
+        session!!.close()
+        conn!!.close()
     }
 
 
     open fun <T : Message> receive(type: Class<T>): T {
+        conn = cf.createTopicConnection()
+        conn!!.start()
+
+        session = conn!!.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+        val destination = session!!.createTopic("topic://dev1/")
+
+        subscriber = session!!.createDurableSubscriber(destination, "mqtest")
         val result = type.cast(subscriber!!.receive(5000L))
+
+        subscriber!!.close()
+        session!!.close()
+        conn!!.close()
 
         return type.cast(result)
     }

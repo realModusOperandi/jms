@@ -37,8 +37,19 @@
         <properties.wasJms />
     </jmsConnectionFactory>
 
+    <jmsTopicConnectionFactory id="MQTestTCF" jndiName="jms/mqRemoteTCF">
+        <properties.wmqJms channel="DEV.APP.SVRCONN" clientId="mqtest" hostName="9.42.25.132" port="30347" queueManager="mqtest" brokerCCSubQueue="SYSTEM.JMS.ND.CC.SUBSCRIBER.QUEUE" brokerControlQueue="SYSTEM.BROKER.
+CONTROL.QUEUE" brokerPubQueue="SYSTEM.BROKER.DEFAULT.STREAM" brokerSubQueue="SYSTEM.JMS.ND.SUBSCRIBER.QUEUE" brokerVersion="" cleanupInterval="3600000ms" cloneSupport="ENABLED" subscriptionStore="MIGRATE"/>
+        <connectionManager purgePolicy="EntirePool"/>
+    </jmsTopicConnectionFactory>
+
+<!--    <jmsQueueConnectionFactory id="MQTestQCF" jndiName="jms/mqRemoteQCF">-->
+<!--        <properties.wmqJms channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest"/>-->
+<!--    </jmsQueueConnectionFactory>-->
+
     <jmsQueueConnectionFactory id="MQTestQCF" jndiName="jms/mqRemoteQCF">
-        <properties.wmqJms channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest"/>
+        <properties.wmqJms channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest" temporaryModel="SYSTEM.DEFAULT.MODEL.QUEUE"/>
+        <connectionManager purgePolicy="EntirePool"/>
     </jmsQueueConnectionFactory>
 
     <jmsQueue jndiName="jms/jmsQueue1">
@@ -58,11 +69,19 @@
         <properties.wasJms queueName="MessageQueue1" />
     </jmsQueue>
 
+    <jmsTopic id="MQTestTopic" jndiName="jms/mqRemoteTopic">
+        <properties.wmqJms baseTopicName="dev1/"/>
+    </jmsTopic>
+
     <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">
         <properties.wmqJms baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.1"/>
     </jmsQueue>
 
-    <variable name="wmqJmsClient.rar.location" value="/Users/liam/Desktop/wmq.jmsra.rar" />
+    <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">
+        <properties.wmqJms baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.2" />
+    </jmsQueue>
+
+    <variable name="wmqJmsClient.rar.location" value="/Users/liam/Desktop/JMS/wmq.jmsra.rar" />
 
     <logging traceSpecification="com.ibm.ws.messaging.*=all" traceFileName="trace.log" traceFormat="BASIC" />
 
