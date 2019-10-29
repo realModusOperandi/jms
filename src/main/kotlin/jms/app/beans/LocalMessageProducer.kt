@@ -9,13 +9,13 @@ import javax.jms.*
 open class LocalMessageProducer {
 
     @Resource(lookup = "jms/localMessageCF")
-    open lateinit var cf: ConnectionFactory
+    open lateinit var cf: QueueConnectionFactory
 
     @Resource(lookup = "jms/jmsLocalMessageQueue")
     open lateinit var queue: Queue
 
-    open lateinit var conn: Connection
-    open lateinit var session: Session
+    open lateinit var conn: QueueConnection
+    open lateinit var session: QueueSession
 
     init {
 
@@ -23,10 +23,10 @@ open class LocalMessageProducer {
 
     @PostConstruct
     open fun initBean() {
-        conn = cf.createConnection()
+        conn = cf.createQueueConnection()
         conn.start()
 
-        session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE)
+        session = conn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE)
         clearQueue(queue)
     }
 
