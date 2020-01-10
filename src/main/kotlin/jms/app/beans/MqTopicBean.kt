@@ -42,9 +42,8 @@ open class MqTopicBean {
         conn!!.start()
 
         session = conn!!.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-        val destination = session!!.createTopic("topic://dev1/")
 
-        subscriber = session!!.createDurableSubscriber(destination, "mqtest")
+        subscriber = session!!.createDurableSubscriber(topic, "mqtest")
         val m = session!!.createMessage()
         m.setObjectProperty("testKey", message)
 
@@ -63,9 +62,8 @@ open class MqTopicBean {
         conn!!.start()
 
         session = conn!!.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-        val destination = session!!.createTopic("topic://dev1/")
 
-        subscriber = session!!.createDurableSubscriber(destination, "mqtest")
+        subscriber = session!!.createDurableSubscriber(topic, "mqtest")
         val result = type.cast(subscriber!!.receive(5000L))
 
         subscriber!!.close()

@@ -5,7 +5,6 @@
         <feature>jaxrs-1.1</feature>
         <feature>wasJmsServer-1.0</feature>
         <feature>wasJmsClient-1.1</feature>
-        <feature>wmqJmsClient-1.1</feature>
         <feature>jmsMdb-3.1</feature>
     </featureManager>
 
@@ -38,8 +37,8 @@
     </jmsConnectionFactory>
 
     <jmsTopicConnectionFactory id="MQTestTCF" jndiName="jms/mqRemoteTCF">
-        <properties.wmqJms channel="DEV.APP.SVRCONN" clientId="mqtest" hostName="9.42.25.132" port="30347" queueManager="mqtest" brokerCCSubQueue="SYSTEM.JMS.ND.CC.SUBSCRIBER.QUEUE" brokerControlQueue="SYSTEM.BROKER.
-CONTROL.QUEUE" brokerPubQueue="SYSTEM.BROKER.DEFAULT.STREAM" brokerSubQueue="SYSTEM.JMS.ND.SUBSCRIBER.QUEUE" brokerVersion="" cleanupInterval="3600000ms" cloneSupport="ENABLED" subscriptionStore="MIGRATE"/>
+        <properties.mqJmsRa channel="DEV.APP.SVRCONN" clientId="mqtest" hostName="9.42.25.132" port="30347" queueManager="mqtest" brokerCCSubQueue="SYSTEM.JMS.ND.CC.SUBSCRIBER.QUEUE" brokerControlQueue="SYSTEM.BROKER.
+CONTROL.QUEUE" brokerPubQueue="SYSTEM.BROKER.DEFAULT.STREAM" brokerSubQueue="SYSTEM.JMS.ND.SUBSCRIBER.QUEUE" cleanupInterval="3600000ms" cloneSupport="ENABLED" subscriptionStore="MIGRATE"/>
         <connectionManager purgePolicy="EntirePool"/>
     </jmsTopicConnectionFactory>
 
@@ -48,7 +47,7 @@ CONTROL.QUEUE" brokerPubQueue="SYSTEM.BROKER.DEFAULT.STREAM" brokerSubQueue="SYS
 <!--    </jmsQueueConnectionFactory>-->
 
     <jmsQueueConnectionFactory id="MQTestQCF" jndiName="jms/mqRemoteQCF">
-        <properties.wmqJms channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest" temporaryModel="SYSTEM.DEFAULT.MODEL.QUEUE"/>
+        <properties.mqJmsRa channel="DEV.APP.SVRCONN" hostName="9.42.25.132" port="30347" queueManager="mqtest" temporaryModel="SYSTEM.DEFAULT.MODEL.QUEUE"/>
         <connectionManager purgePolicy="EntirePool"/>
     </jmsQueueConnectionFactory>
 
@@ -70,18 +69,20 @@ CONTROL.QUEUE" brokerPubQueue="SYSTEM.BROKER.DEFAULT.STREAM" brokerSubQueue="SYS
     </jmsQueue>
 
     <jmsTopic id="MQTestTopic" jndiName="jms/mqRemoteTopic">
-        <properties.wmqJms baseTopicName="dev1/"/>
+        <properties.mqJmsRa baseTopicName="dev1/"/>
     </jmsTopic>
 
     <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">
-        <properties.wmqJms baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.1"/>
+        <properties.mqJmsRa baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.1"/>
     </jmsQueue>
 
-    <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">
-        <properties.wmqJms baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.2" />
-    </jmsQueue>
+<!--    <jmsQueue id="MQTestQueue" jndiName="jms/mqRemoteQueue">-->
+<!--        <properties.mqJmsRa baseQueueManagerName="mqtest" baseQueueName="DEV.QUEUE.2" />-->
+<!--    </jmsQueue>-->
 
-    <variable name="wmqJmsClient.rar.location" value="/Users/liam/Desktop/JMS/wmq.jmsra.rar" />
+    <resourceAdapter id="mqJmsRa" location="/Users/liam/WebSphere/ConfigEngine/wamt testing/JMS/wmq.jmsra.rar">
+        <classloader apiTypeVisibility="spec, ibm-api, api, third-party"/>
+    </resourceAdapter>
 
     <logging traceSpecification="com.ibm.ws.messaging.*=all" traceFileName="trace.log" traceFormat="BASIC" />
 

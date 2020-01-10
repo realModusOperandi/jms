@@ -1,0 +1,13 @@
+FROM ibmcom/websphere-traditional:latest
+
+USER root
+
+COPY jms.war /work/config/jms.war
+COPY configure.py /work/config/configure.py
+
+RUN apt-get update && \
+    apt-get install -y apt-utils && \
+    apt-get install -y vim && \
+    chown 1000:0 /work/config/jms.war && \
+    echo password > /tmp/PASSWORD && \
+    /work/configure.sh

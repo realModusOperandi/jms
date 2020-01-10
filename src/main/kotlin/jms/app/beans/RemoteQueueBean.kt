@@ -8,13 +8,13 @@ import javax.jms.*
 @Stateless
 open class RemoteQueueBean {
 
-    @Resource(lookup = "jms/remoteCF")
-    open lateinit var cf: ConnectionFactory
+    @Resource(lookup = "jms/endpointQCF")
+    open lateinit var cf: QueueConnectionFactory
 
-    @Resource(lookup = "jms/jmsRemoteQueue")
+    @Resource(lookup = "jms/endpointQueue")
     open lateinit var queue: Queue
 
-    open lateinit var conn: Connection
+    open lateinit var conn: QueueConnection
     open lateinit var session: Session
 
     init {
@@ -23,7 +23,7 @@ open class RemoteQueueBean {
 
     @PostConstruct
     open fun initBean() {
-        conn = cf.createConnection()
+        conn = cf.createQueueConnection()
         conn.start()
 
         session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE)

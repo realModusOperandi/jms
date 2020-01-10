@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id("org.jetbrains.kotlin.jvm").version("1.3.31")
+    kotlin("jvm") version "1.3.61"
     id("net.wasdev.wlp.gradle.plugins.Liberty") version "2.6.5"
     id("com.moowork.node") version "1.3.1"
     war
@@ -67,7 +67,7 @@ repositories {
 
 dependencies {
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
     providedCompile("javax", "javaee-api", "6.0")
 
     libertyRuntime("com.ibm.websphere.appserver.runtime", "wlp-kernel", "19.0.0.9")
@@ -96,9 +96,9 @@ liberty {
     server = ServerExtension("jmsServer")
     server.dropins = listOf(tasks["war"])
     server.bootstrapProperties = mapOf("httpPort" to httpPort,
-            "httpsPort" to httpsPort,
-            "jmsPort" to jmsPort,
-            "jmsSslPort" to jmsSslPort)
+    "httpsPort" to httpsPort,
+    "jmsPort" to jmsPort,
+    "jmsSslPort" to jmsSslPort)
     server.configDirectory = file("src/main/liberty/config")
     server.isLooseApplication = false
     server.features = FeatureExtension()
@@ -110,3 +110,11 @@ tasks["libertyStart"].dependsOn("installFeature")
 tasks["npm_update"].dependsOn("libertyStop")
 tasks["war"].dependsOn("copyFrontend")
 //tasks["npmInstall"].outputs.upToDateWhen { false }
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+    jvmTarget = "1.8"
+}
