@@ -1,5 +1,18 @@
-FROM ibmcom/websphere-traditional:9.0.5.0-ubi
+FROM adoptopenjdk/openjdk13-openj9:ubi-minimal as builder
 
-COPY --chown=was:root jms.war /work/app/
-COPY --chown=was:root configure.py /work/config/
-RUN /work/configure.sh
+# Assumes build context is entire repo
+WORKDIR /work
+ADD . /work/
+
+RUN ./gradlew war
+
+FROM openliberty/open-liberty:full-java13-openj9-ubi
+
+RUN mkdir /opt/ol/wlp/usr/shared/resources/wmq/ && chown -R 1001:0 /opt/ol/wlp/usr/shared/resources/wmq/
+COPY --chown=1001:0 wmq.jmsra.rar /opt/ol/wlp/usr/shared/resources/wmq/
+
+COPY --chown=1001:0 jms.ear_server.xml /config/server.xml
+COPY --chown=1001:0 --from=builder /work/build/libs/jms.war /config/apps/
+
+ARG VERBOSE=true
+RUN configure.sh
