@@ -1,9 +1,9 @@
 apiVersion: openliberty.io/v1beta1
 kind: OpenLibertyApplication
 metadata:
-  name: overrideliberty
+  name: tekton-app
 spec:
-  applicationImage: image-registry.openshift-image-registry.svc:5000/e2e/overridejms:latest
+  applicationImage: image-registry.openshift-image-registry.svc:5000/e2e/app:latest
   env:
     - name: WLP_LOGGING_CONSOLE_FORMAT
       value: "basic"
