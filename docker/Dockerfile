@@ -16,3 +16,4 @@ COPY --chown=1001:0 --from=builder /work/build/libs/jms.war /config/apps/
 
 ARG VERBOSE=true
 RUN configure.sh
+RUN cat /config/server.xml
