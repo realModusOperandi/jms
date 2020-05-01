@@ -7,13 +7,13 @@ plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
     kotlin("jvm") version "1.3.61"
     id("net.wasdev.wlp.gradle.plugins.Liberty") version "2.6.5"
-    id("com.moowork.node") version "1.3.1"
+    id("com.github.node-gradle.node") version "2.2.3"
     war
 }
 
 node {
-    version = "12.9.1"
-    npmVersion = "6.11.2"
+    version = "12.16.2"
+    npmVersion = "6.14.4"
     download = true
     workDir = file("$rootDir/src/main/frontend/node")
     nodeModulesDir = file("$rootDir/src/main/frontend")
@@ -36,7 +36,7 @@ tasks.register("npmUpdate") {
 
 tasks.register<NpmTask>("installDependencies") {
     dependsOn("npmSetup")
-    setWorkingDir("$rootDir/src/main/frontend")
+    setWorkingDir(File("$rootDir/src/main/frontend"))
     setArgs(listOf("install"))
 }
 
@@ -48,7 +48,7 @@ tasks.register<NpmTask>("buildStandaloneClient") {
     }).withPropertyName("sourceFiles")
     outputs.dir("${rootDir}/src/main/frontend/dist").withPropertyName("outputDir")
 
-    setWorkingDir("$rootDir/src/main/frontend")
+    setWorkingDir(File("$rootDir/src/main/frontend"))
     setArgs(listOf("run", "build"))
 }
 
@@ -70,7 +70,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.3.61")
     providedCompile("javax", "javaee-api", "6.0")
 
-    libertyRuntime("com.ibm.websphere.appserver.runtime", "wlp-kernel", "19.0.0.9")
+    libertyRuntime("com.ibm.websphere.appserver.runtime", "wlp-kernel", "20.0.0.3")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")

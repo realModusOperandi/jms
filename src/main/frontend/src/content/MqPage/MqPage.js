@@ -182,7 +182,7 @@ const MqPage = () => {
                 <div className="bx--row mq-page__tab-content">
                   <div className="bx--col-md-4 bx--col-lg-7">
                     <h2 className="mq-page__subheading">
-                      Remote Queue Test
+                      MQ Queue Test
                     </h2>
                     <p className="mq-page__p">
                       Send messages to MQ, then retrieve them. The queue is accessed remotely over the MQ endpoint.
@@ -212,7 +212,7 @@ const MqPage = () => {
                 <div className="bx--row mq-page__tab-content">
                   <div className="bx--col-md-4 bx--col-lg-7">
                     <h2 className="mq-page__subheading">
-                      Remote Topic Test
+                      MQ Topic Test
                     </h2>
                     <p className="mq-page__p">
                       Publish messages to MQ, then subscribe to them. The topic is accessed remotely over the MQ endpoint.
